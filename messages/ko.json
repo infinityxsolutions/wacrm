@@ -2987,6 +2987,11 @@
       "submitFailed": "템플릿을 제출하지 못했습니다.",
       "metaApiStatus": "Meta API 오류: {status}",
       "syncFailed": "템플릿을 동기화하지 못했습니다"
+    },
+    "autopilot": {
+      "loadFailed": "Could not load your business setup",
+      "invalidAnswers": "Please fix the highlighted answers",
+      "applyFailed": "Could not finish setting up your account. Please try again."
     }
   },
   "Billing": {

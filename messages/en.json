@@ -2987,6 +2987,11 @@
       "submitFailed": "Failed to submit template.",
       "metaApiStatus": "Meta API error: {status}",
       "syncFailed": "Failed to sync templates"
+    },
+    "autopilot": {
+      "loadFailed": "Could not load your business setup",
+      "invalidAnswers": "Please fix the highlighted answers",
+      "applyFailed": "Could not finish setting up your account. Please try again."
     }
   },
   "Billing": {

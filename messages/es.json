@@ -2987,6 +2987,11 @@
       "submitFailed": "Error al enviar la plantilla.",
       "metaApiStatus": "Error de la API de Meta: {status}",
       "syncFailed": "Error al sincronizar las plantillas"
+    },
+    "autopilot": {
+      "loadFailed": "Could not load your business setup",
+      "invalidAnswers": "Please fix the highlighted answers",
+      "applyFailed": "Could not finish setting up your account. Please try again."
     }
   },
   "Billing": {
