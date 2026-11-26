@@ -27,6 +27,7 @@ interface PlanRow {
   name: string;
   description: string | null;
   price_inr_monthly: number;
+  price_inr_yearly: number | null;
   max_members: number;
   max_contacts: number;
   max_broadcast_messages_monthly: number;
@@ -253,6 +254,7 @@ function PlansTab({ plans, onSaved }: { plans: PlanRow[]; onSaved: () => void })
         description: d.description ?? '',
         is_public: d.is_public,
         ...Object.fromEntries(PLAN_NUMBER_FIELDS.map((f) => [f, Number(d[f])])),
+        price_inr_yearly: d.price_inr_yearly === null ? null : Number(d.price_inr_yearly),
       }),
     });
     setSaving(null);
@@ -291,6 +293,16 @@ function PlansTab({ plans, onSaved }: { plans: PlanRow[]; onSaved: () => void })
                 <div className="space-y-1">
                   <Label>{t('planDescription')}</Label>
                   <Input value={d.description ?? ''} onChange={(e) => set({ description: e.target.value })} />
+                </div>
+                <div className="space-y-1">
+                  <Label>{t('field_price_inr_yearly')}</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder={String(Number(d.price_inr_monthly) * 10)}
+                    value={d.price_inr_yearly === null ? '' : String(d.price_inr_yearly)}
+                    onChange={(e) => set({ price_inr_yearly: e.target.value === '' ? null : Number(e.target.value) })}
+                  />
                 </div>
                 {PLAN_NUMBER_FIELDS.map((f) => (
                   <div key={f} className="space-y-1">

@@ -2993,6 +2993,19 @@
       "loadFailed": "Could not load your business setup",
       "invalidAnswers": "Please fix the highlighted answers",
       "applyFailed": "Could not finish setting up your account. Please try again."
+    },
+    "billing": {
+      "errors": {
+        "plan_not_found": "That plan is not available.",
+        "free_plan": "This plan has no price set yet.",
+        "comped": "This account is on a complimentary plan, so there is nothing to pay.",
+        "suspended": "This account is suspended. Please contact support.",
+        "already_subscribed": "You already have a paid subscription. Cancel it first to change plan.",
+        "not_subscribed": "There is no active paid subscription to cancel.",
+        "notConfigured": "Online payments are not switched on yet. Please contact support.",
+        "providerFailed": "The payment provider could not start the checkout. Please try again.",
+        "invalidRequest": "Please choose a plan and billing period."
+      }
     }
   },
   "Billing": {
@@ -3038,7 +3051,32 @@
     "readOnlyDesc": "Your data is safe and new customer messages are still received, but sending and editing are paused until a plan is active.",
     "openBilling": "Open Plan & billing",
     "trialEndingTitle": "{days, plural, =0 {Your free trial ends today} =1 {Your free trial ends tomorrow} other {Your free trial ends in # days}}",
-    "trialEndingDesc": "Choose a plan to keep sending messages and AI replies without interruption."
+    "trialEndingDesc": "Choose a plan to keep sending messages and AI replies without interruption.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyHint": "Two months free",
+    "perYear": "per year",
+    "choosePlan": "Choose plan",
+    "redirecting": "Opening secure checkout…",
+    "payFailed": "Could not start checkout",
+    "contactToUpgrade": "Online payments are not switched on yet. Contact support to change your plan.",
+    "testMode": "Test mode: no real money is charged. Use Razorpay test payment details.",
+    "renews": "Renews on {date}",
+    "endsOn": "Access continues until {date} and will not renew",
+    "billedMonthly": "Billed monthly",
+    "billedYearly": "Billed yearly",
+    "cancelPlan": "Cancel renewal",
+    "cancelConfirm": "Stop renewing this plan? You keep access until the end of the paid period.",
+    "cancelled": "Renewal cancelled",
+    "cancelFailed": "Could not cancel. Please try again.",
+    "refreshStatus": "I have paid, refresh status",
+    "history": "Payment history",
+    "noPayments": "No payments yet.",
+    "colDate": "Date",
+    "colAmount": "Amount",
+    "colMethod": "Method",
+    "colStatus": "Status",
+    "compedNoPay": "This account is complimentary, so no payment is needed."
   },
   "PlatformAdmin": {
     "loading": "Loading…",
@@ -3098,7 +3136,8 @@
     "allowlistDesc": "Used when sign-up is set to “Only approved emails”.",
     "allowlistEmpty": "No approved emails yet.",
     "add": "Add",
-    "remove": "Remove"
+    "remove": "Remove",
+    "field_price_inr_yearly": "Yearly price (₹, empty = 10 × monthly)"
   },
   "Autopilot": {
     "title": "Business Autopilot",
