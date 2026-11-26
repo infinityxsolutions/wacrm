@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
@@ -119,6 +119,24 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
   const { profile, profileLoading, account, accountRole, signOut } = useAuth();
   const totalUnread = useTotalUnread();
   const unreadNotifications = useUnreadNotifications();
+  // The platform console link is shown only to PLATFORM_ADMIN_EMAILS;
+  // the API enforces it, this just hides the link from everyone else.
+  const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/platform/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : { isPlatformAdmin: false }))
+      .then((d: { isPlatformAdmin?: boolean }) => {
+        if (!cancelled) setIsPlatformAdmin(d.isPlatformAdmin === true);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const bottomItems = isPlatformAdmin
+    ? [...bottomNavItems, { href: "/admin", labelKey: "platformAdmin", icon: Crown }]
+    : bottomNavItems;
   // Only surface the account-name strip when it actually carries
   // information. A solo user's personal account is named after them
   // (the 017 signup trigger seeds it from `full_name`), so showing it
@@ -271,7 +289,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
           <div className="my-4 border-t border-border" />
 
           <ul className="flex flex-col gap-1">
-            {bottomNavItems.map((item) => {
+            {bottomItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
               return (
                 <li key={item.href}>

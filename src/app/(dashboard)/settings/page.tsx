@@ -19,6 +19,7 @@ import { DealsSettings } from '@/components/settings/deals-settings';
 import { InboxSettings } from '@/components/settings/inbox-settings';
 import { MembersTab } from '@/components/settings/members-tab';
 import { ApiKeysSettings } from '@/components/settings/api-keys-settings';
+import { BillingPanel } from '@/components/settings/billing-panel';
 import {
   resolveSection,
   type SettingsSection,
@@ -82,6 +83,7 @@ function SettingsPageInner() {
     inbox: <InboxSettings />,
     deals: <DealsSettings />,
     members: <MembersTab />,
+    billing: <BillingPanel />,
     api: <ApiKeysSettings />,
   };
 
