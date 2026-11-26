@@ -11,6 +11,7 @@ import {
   Bell,
   Bot,
   Crown,
+  Sparkles,
   GitBranch,
   LayoutDashboard,
   LogOut,
@@ -99,6 +100,7 @@ const navItems: NavItem[] = [
   { href: "/automations", labelKey: "automations", icon: Zap },
   { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
   { href: "/agents", labelKey: "aiAgents", icon: Bot },
+  { href: "/autopilot", labelKey: "autopilot", icon: Sparkles },
 ];
 
 const bottomNavItems = [

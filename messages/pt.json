@@ -42,7 +42,8 @@
     "menuProfile": "Perfil",
     "menuSettings": "Configurações",
     "menuSignOut": "Sair",
-    "platformAdmin": "Admin console"
+    "platformAdmin": "Admin console",
+    "autopilot": "Autopilot"
   },
   "Header": {
     "dashboard": "Painel",
@@ -2987,6 +2988,11 @@
       "submitFailed": "Falha ao enviar o modelo.",
       "metaApiStatus": "Erro da API da Meta: {status}",
       "syncFailed": "Falha ao sincronizar os modelos"
+    },
+    "autopilot": {
+      "loadFailed": "Could not load your business setup",
+      "invalidAnswers": "Please fix the highlighted answers",
+      "applyFailed": "Could not finish setting up your account. Please try again."
     }
   },
   "Billing": {
@@ -3093,5 +3099,90 @@
     "allowlistEmpty": "No approved emails yet.",
     "add": "Add",
     "remove": "Remove"
+  },
+  "Autopilot": {
+    "title": "Business Autopilot",
+    "subtitle": "Answer a few questions about your car detailing studio. GrowthXAi builds your AI agent, knowledge base, quick replies, pipeline, tags and WhatsApp templates for you.",
+    "lastApplied": "Last applied {date}",
+    "failed": "Something went wrong. Please try again.",
+    "applied": "Your account is set up",
+    "preview": "Preview setup",
+    "apply": "Build my setup",
+    "business": {
+      "title": "Your business",
+      "desc": "Customers will see these details in replies.",
+      "name": "Business name",
+      "city": "City",
+      "address": "Address or area",
+      "maps": "Google Maps link",
+      "phone": "Contact number",
+      "hours": "Opening hours",
+      "languages": "Reply languages (comma separated)",
+      "instagram": "Instagram"
+    },
+    "services": {
+      "title": "Services and prices",
+      "desc": "Tick what you offer and add prices. Leave a price blank if you quote after seeing the car.",
+      "size": {
+        "hatchback": "Hatchback ₹",
+        "sedan": "Sedan ₹",
+        "suv": "SUV ₹"
+      },
+      "duration": "Time taken",
+      "warranty": "Warranty",
+      "priceHint": "The AI only quotes prices you enter here. It never makes up a price."
+    },
+    "policies": {
+      "title": "Booking and policies",
+      "pickup": "Pickup and drop",
+      "pickupOption": {
+        "no": "Not offered",
+        "free": "Free",
+        "paid": "Paid"
+      },
+      "pickupNote": "Pickup details",
+      "doorstep": "Doorstep service available",
+      "payment": "Payment methods (comma separated)",
+      "advance": "Booking advance",
+      "cancellation": "Cancellation / reschedule policy"
+    },
+    "marketing": {
+      "title": "Offers and brand",
+      "offer": "Current offer",
+      "review": "Google review link",
+      "highlights": "What makes you different?",
+      "highlightsPlaceholder": "e.g. 8 years experience, Gtechniq certified, covered workshop",
+      "tone": "Tone",
+      "toneOption": {
+        "friendly": "Friendly",
+        "premium": "Premium"
+      }
+    },
+    "report": {
+      "title": "Setup checklist",
+      "agent": {
+        "created": "AI agent created with GrowthXAi AI",
+        "updated": "AI agent instructions updated",
+        "needs_key": "AI agent instructions saved. Add an AI key in Settings → AI to switch it on."
+      },
+      "knowledge": "Knowledge base: {created} added, {updated} updated, {indexFailed} not indexed",
+      "quickReplies": "Quick replies: {created} added, {skipped} already existed",
+      "tags": "Tags: {created} added, {skipped} already existed",
+      "pipeline": {
+        "created": "Pipeline \"Detailing jobs\" created",
+        "skipped": "Pipeline \"Detailing jobs\" already exists"
+      },
+      "autoReplyHint": "Auto-reply stays off until you switch it on in Settings → AI, so you can test in the playground first."
+    },
+    "result": {
+      "title": "What GrowthXAi built",
+      "counts": "{docs} knowledge docs · {replies} quick replies · {tags} tags · {templates} WhatsApp templates",
+      "prompt": "AI agent instructions",
+      "knowledge": "Knowledge base",
+      "quickReplies": "Quick replies",
+      "templates": "WhatsApp templates",
+      "templatesHint": "Meta reviews each template, usually within minutes to a day. Submit after your WhatsApp number is connected.",
+      "submitTemplates": "Submit templates to Meta"
+    }
   }
 }
