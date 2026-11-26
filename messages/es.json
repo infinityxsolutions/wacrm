@@ -2206,7 +2206,9 @@
       "providerOpenAiCompatible": "API compatible con OpenAI",
       "baseUrl": "URL base",
       "baseUrlHint": "URL base de la API compatible con OpenAI, por ejemplo https://api.groq.com/openai/v1. /chat/completions se añade automáticamente, salvo que incluyas esa ruta.",
-      "missingBaseUrl": "Introduce la URL base de la API compatible con OpenAI."
+      "missingBaseUrl": "Introduce la URL base de la API compatible con OpenAI.",
+      "usePlatformAi": "Use GrowthXAi AI (included in your plan)",
+      "usePlatformAiDesc": "No API key needed. Replies count towards your plan's monthly AI replies. Turn this off to use your own OpenAI or Anthropic key instead."
     },
     "aiKnowledge": {
       "loadFailed": "Error al cargar la base de conocimiento",
@@ -2883,7 +2885,8 @@
         "savedIndexFailed": "Guardado, pero la indexación semántica falló ({message}). La búsqueda por palabras clave sigue funcionando; usa Reindexar para reintentar.",
         "savedNotIndexed": "Guardado, pero la indexación falló ({message}). El documento aún no aparece en las búsquedas; usa Reindexar para reintentar.",
         "savedKeywordOnly": "Guardado solo con búsqueda por palabras clave: no se pudo descifrar tu clave de embeddings (revisa ENCRYPTION_KEY y vuelve a ingresar la clave)."
-      }
+      },
+      "platformAiUnavailable": "GrowthXAi's built-in AI isn't available right now. Add your own AI key instead, or contact support."
     },
     "automations": {
       "copyName": "{name} (Copia)",
@@ -2983,5 +2986,13 @@
       "metaApiStatus": "Error de la API de Meta: {status}",
       "syncFailed": "Error al sincronizar las plantillas"
     }
+  },
+  "Billing": {
+    "readOnly": "Your GrowthXAi plan has expired, so your account is read-only. Choose a plan in Settings → Billing to continue sending messages.",
+    "broadcastLimit": "This broadcast needs {requested} messages, but your plan has {remaining} of {limit} broadcast messages left this month. Upgrade your plan or send to fewer contacts.",
+    "aiLimit": "You've used all {limit} AI replies included in your plan this month. Upgrade your plan or add your own AI key in Agent setup.",
+    "memberLimit": "Your plan allows {limit} team members (including pending invitations). Upgrade your plan to invite more people.",
+    "memberLimitGeneric": "Your plan's team-member limit has been reached. Upgrade your plan to invite more people.",
+    "contactLimit": "Your plan's contact limit has been reached. Upgrade your plan to add more contacts. Customers who message you on WhatsApp are still added automatically."
   }
 }

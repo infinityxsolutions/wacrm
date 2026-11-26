@@ -31,6 +31,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { hasMinRole, isAccountRole, type AccountRole } from "./roles";
 import { getT } from "@/lib/i18n/translate";
+import { PlanLimitError } from "@/lib/billing/entitlements";
 
 const t = getT("LibErrors.auth");
 
@@ -72,6 +73,14 @@ export class ForbiddenError extends Error {
 export function toErrorResponse(err: unknown): NextResponse {
   if (err instanceof UnauthorizedError || err instanceof ForbiddenError) {
     return NextResponse.json({ error: err.message }, { status: err.status });
+  }
+  if (err instanceof PlanLimitError) {
+    // 402 Payment Required + a machine-readable code so the UI can offer
+    // an upgrade instead of a generic failure.
+    return NextResponse.json(
+      { error: err.message, code: err.code },
+      { status: err.status },
+    );
   }
   console.error("[toErrorResponse] uncategorized error:", err);
   return NextResponse.json({ error: t("internal") }, { status: 500 });

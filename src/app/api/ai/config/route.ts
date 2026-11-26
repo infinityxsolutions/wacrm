@@ -11,6 +11,8 @@ import { embedTexts } from '@/lib/ai/embeddings'
 import { AiError, type AiProvider } from '@/lib/ai/types'
 import { normalizeOpenAiCompatibleBaseUrl } from '@/lib/ai/providers/openai-compatible'
 import { canReuseStoredAiKey } from '@/lib/ai/stored-key'
+import { platformAiSettings } from '@/lib/ai/config'
+import { planErrorFromDb } from '@/lib/billing/entitlements'
 import { getT } from '@/lib/i18n/translate'
 
 const t = getT('Api')
@@ -35,7 +37,7 @@ export async function GET() {
       // `api_key` is selected only to derive `has_key` — it is stripped
       // out below and never returned to the client.
       .select(
-        'provider, model, base_url, system_prompt, is_active, auto_reply_enabled, auto_reply_max_per_conversation, handoff_agent_id, api_key, embeddings_api_key',
+        'provider, model, base_url, system_prompt, is_active, auto_reply_enabled, auto_reply_max_per_conversation, handoff_agent_id, api_key, embeddings_api_key, use_platform_key',
       )
       .eq('account_id', accountId)
       .maybeSingle()
@@ -48,7 +50,11 @@ export async function GET() {
       )
     }
 
-    if (!data) return NextResponse.json({ configured: false })
+    // Whether GrowthXAi's own AI (included in the plan) can be offered.
+    const platformAiAvailable = platformAiSettings() !== null
+    if (!data) {
+      return NextResponse.json({ configured: false, platform_ai_available: platformAiAvailable })
+    }
     // The keys are selected only to derive the has_* flags; neither is
     // returned to the client.
     const { api_key, embeddings_api_key, ...safe } = data
@@ -56,6 +62,7 @@ export async function GET() {
       configured: true,
       has_key: !!api_key,
       has_embeddings_key: !!embeddings_api_key,
+      platform_ai_available: platformAiAvailable,
       ...safe,
     })
   } catch (err) {
@@ -82,12 +89,18 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => null)
     if (!body || typeof body !== 'object') return bad(t('common.invalidRequestBody'))
 
-    const provider = body.provider as AiProvider
+    // "Use GrowthXAi AI": the platform's key and model answer for this
+    // business and usage counts against its plan. No provider key needed.
+    const usePlatformKey = body.use_platform_key === true
+    const platform = usePlatformKey ? platformAiSettings() : null
+    if (usePlatformKey && !platform) return bad(t('ai.platformAiUnavailable'))
+
+    const provider = (platform ? platform.provider : body.provider) as AiProvider
     if (provider !== 'openai' && provider !== 'anthropic' && provider !== 'openai_compatible') {
       return bad(t('ai.providerInvalid'))
     }
     const model = typeof body.model === 'string' ? body.model.trim() : ''
-    if (!model) return bad(t('ai.modelRequired'))
+    if (!model && !platform) return bad(t('ai.modelRequired'))
 
     const baseUrlProvided = 'base_url' in body
     const requestedBaseUrl = typeof body.base_url === 'string' ? body.base_url.trim() : ''
@@ -132,6 +145,54 @@ export async function POST(request: Request) {
         ? body.embeddings_api_key.trim()
         : ''
     const clearEmbeddingsKey = body.embeddings_api_key === null
+
+    if (platform) {
+      // Validate the embeddings key, if one was sent, exactly as below.
+      if (rawEmbeddingsKey) {
+        try {
+          await embedTexts(rawEmbeddingsKey, ['ping'])
+        } catch (err) {
+          if (err instanceof AiError) {
+            return NextResponse.json(
+              { error: t('ai.embeddingsKeyError', { message: err.message }), code: err.code },
+              { status: 400 },
+            )
+          }
+          return bad(t('ai.validateEmbeddingsFailed'))
+        }
+      }
+      // The business's own stored key (if any) is kept untouched, so it can
+      // switch back to "own key" later without re-entering it.
+      const platformRow: Record<string, unknown> = {
+        use_platform_key: true,
+        provider: platform.provider,
+        system_prompt: systemPrompt,
+        is_active: isActive,
+        auto_reply_enabled: autoReplyEnabled,
+        auto_reply_max_per_conversation: maxPer,
+      }
+      if (handoffProvided) platformRow.handoff_agent_id = handoffAgentId
+      if (rawEmbeddingsKey) platformRow.embeddings_api_key = encrypt(rawEmbeddingsKey)
+      else if (clearEmbeddingsKey) platformRow.embeddings_api_key = null
+
+      const { data: current } = await supabase
+        .from('ai_configs')
+        .select('id')
+        .eq('account_id', accountId)
+        .maybeSingle()
+      const { error: saveErr } = current
+        ? await supabase.from('ai_configs').update(platformRow).eq('account_id', accountId)
+        : await supabase
+            .from('ai_configs')
+            .insert({ account_id: accountId, created_by: userId, ...platformRow })
+      if (saveErr) {
+        console.error('[ai/config POST] platform save error:', saveErr)
+        const planErr = planErrorFromDb(saveErr)
+        if (planErr) throw planErr
+        return NextResponse.json({ error: t('ai.saveConfigFailed') }, { status: 500 })
+      }
+      return NextResponse.json({ success: true })
+    }
 
     // Reuse the stored key when the form didn't send a fresh one.
     const { data: existing } = await supabase
@@ -192,6 +253,7 @@ export async function POST(request: Request) {
           autoReplyMaxPerConversation: maxPer,
           handoffAgentId: null,
           embeddingsApiKey: null,
+          keySource: 'own',
         })
       } catch (err) {
         if (err instanceof AiError) {
@@ -224,6 +286,7 @@ export async function POST(request: Request) {
 
     const encryptedKey = rawKey ? encrypt(rawKey) : null
     const shared: Record<string, unknown> = {
+      use_platform_key: false,
       provider,
       model,
       base_url: baseUrl,

@@ -1,5 +1,6 @@
 import { supabaseAdmin } from './admin-client'
 import { loadAiConfig } from './config'
+import { getEntitlements, remaining } from '@/lib/billing/entitlements'
 import { buildConversationContext } from './context'
 import { retrieveKnowledge } from './knowledge'
 import { generateReply } from './generate'
@@ -112,6 +113,22 @@ export async function dispatchInboundToAiReply(
       return
     }
 
+    // SaaS: a lapsed/suspended account gets no AI replies, and replies on
+    // GrowthXAi's own key stop at the plan's monthly allowance. Either way
+    // the inbound stays in the inbox for a human — nothing is lost.
+    const ent = await getEntitlements(db, accountId)
+    if (ent && !ent.writable) return
+    if (
+      config.keySource === 'platform' &&
+      ent &&
+      remaining(ent, 'ai_replies_monthly') < 1
+    ) {
+      console.warn(
+        `[ai auto-reply] account ${accountId} used its plan's AI replies for this month — skipping.`,
+      )
+      return
+    }
+
     // Every gate has passed — we're committed to attempting a reply, so
     // show the customer "typing…" (and mark their message read) while the
     // retrieval + LLM round trips run. Meta clears the indicator after
@@ -154,6 +171,7 @@ export async function dispatchInboundToAiReply(
       provider: config.provider,
       model: config.model,
       usage,
+      keySource: config.keySource,
     })
 
     if (handoff || !text) {

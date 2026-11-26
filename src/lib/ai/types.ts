@@ -31,6 +31,10 @@ export interface AiConfig {
    *  knowledge base is embedded and semantic retrieval turns on; when
    *  null, retrieval falls back to lexical full-text search. */
   embeddingsApiKey: string | null
+  /** 'platform' when the call is paid by GrowthXAi's own key and counts
+   *  against the plan's monthly AI replies; 'own' (or absent) for the
+   *  business's key. */
+  keySource?: 'own' | 'platform'
 }
 
 /** A single conversation turn in the shape both providers accept. */

@@ -11,6 +11,8 @@ export interface LogAiUsageArgs {
   model: string
   /** Provider usage; a no-op when null (nothing worth recording). */
   usage: AiUsage | null
+  /** 'platform' calls count against the plan's monthly AI replies. */
+  keySource?: 'own' | 'platform'
 }
 
 /**
@@ -30,7 +32,11 @@ export async function logAiUsage(
   db: SupabaseClient,
   args: LogAiUsageArgs,
 ): Promise<void> {
-  if (!args.usage) return
+  // Own-key calls without usage are skipped (we'd only write zeros), but a
+  // platform call is always recorded: it is what the monthly AI-reply
+  // allowance counts.
+  if (!args.usage && args.keySource !== 'platform') return
+  const usage = args.usage ?? { promptTokens: 0, completionTokens: 0, totalTokens: 0 }
   try {
     const { error } = await db.from('ai_usage_log').insert({
       account_id: args.accountId,
@@ -38,9 +44,10 @@ export async function logAiUsage(
       mode: args.mode,
       provider: args.provider,
       model: args.model,
-      prompt_tokens: args.usage.promptTokens,
-      completion_tokens: args.usage.completionTokens,
-      total_tokens: args.usage.totalTokens,
+      prompt_tokens: usage.promptTokens,
+      completion_tokens: usage.completionTokens,
+      total_tokens: usage.totalTokens,
+      key_source: args.keySource ?? 'own',
     })
     if (error) {
       console.error('[ai usage] log insert failed:', error)

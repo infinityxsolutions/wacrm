@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireRole, toErrorResponse } from '@/lib/auth/account'
+import { assertAiQuota, assertWritable, getEntitlements } from '@/lib/billing/entitlements'
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit'
 import { loadAiConfig } from '@/lib/ai/config'
 import { buildConversationContext } from '@/lib/ai/context'
@@ -79,6 +80,14 @@ export async function POST(request: Request) {
       )
     }
 
+    // SaaS: a lapsed account can't use AI, and GrowthXAi's own key is
+    // capped by the plan's monthly AI replies (own keys are not capped).
+    {
+      const ent = await getEntitlements(supabase, accountId)
+      if (config.keySource === 'platform') assertAiQuota(ent)
+      else assertWritable(ent)
+    }
+
     const messages = await buildConversationContext(supabase, conversationId)
     // Nothing to draft from — a brand-new thread with no customer text
     // would otherwise produce a nonsensical reply-to-nothing.
@@ -124,6 +133,7 @@ export async function POST(request: Request) {
         provider: config.provider,
         model: config.model,
         usage,
+        keySource: config.keySource,
       })
     } catch (logErr) {
       console.error('[ai/draft] usage log skipped:', logErr)

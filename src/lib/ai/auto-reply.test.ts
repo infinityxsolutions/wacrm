@@ -10,6 +10,7 @@ const h = vi.hoisted(() => ({
   engineSendText: vi.fn(),
   loadAccountMetaCredentials: vi.fn(),
   sendTypingIndicator: vi.fn(),
+  getEntitlements: vi.fn(),
   state: {
     conv: null as Record<string, unknown> | null,
     autoResponders: [] as { id: string }[],
@@ -22,6 +23,11 @@ const h = vi.hoisted(() => ({
 }))
 
 vi.mock('./config', () => ({ loadAiConfig: h.loadAiConfig }))
+// SaaS plan checks: the real `remaining` helper, a controllable loader.
+vi.mock('@/lib/billing/entitlements', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/lib/billing/entitlements')>()),
+  getEntitlements: h.getEntitlements,
+}))
 vi.mock('./context', () => ({ buildConversationContext: h.buildConversationContext }))
 vi.mock('./knowledge', () => ({ retrieveKnowledge: h.retrieveKnowledge }))
 vi.mock('./generate', () => ({ generateReply: h.generateReply }))
@@ -125,6 +131,8 @@ beforeEach(() => {
   h.state.rpcCalls = []
   h.state.latestInbound = [{ message_id: 'wamid.inbound-1' }]
   h.loadAiConfig.mockResolvedValue(aiConfig())
+  // null = entitlements unavailable → fail open (the pre-SaaS behaviour).
+  h.getEntitlements.mockResolvedValue(null)
   h.buildConversationContext.mockResolvedValue([{ role: 'user', content: 'hi' }])
   h.retrieveKnowledge.mockResolvedValue([])
   h.generateReply.mockResolvedValue({ text: 'Hello!', handoff: false })
@@ -245,6 +253,65 @@ describe('dispatchInboundToAiReply — eligibility gates', () => {
     expect(h.generateReply).not.toHaveBeenCalled()
     expect(h.engineSendText).not.toHaveBeenCalled()
     expect(h.sendTypingIndicator).not.toHaveBeenCalled()
+  })
+})
+
+function entitlements(overrides: { writable?: boolean; used?: number; limit?: number } = {}) {
+  return {
+    account_id: 'acct-1',
+    plan: { id: 'starter', name: 'Starter', price_inr_monthly: 999 },
+    status: 'trialing',
+    is_comped: false,
+    trial_ends_at: null,
+    current_period_end: null,
+    grace_days: 3,
+    writable: overrides.writable ?? true,
+    limits: {
+      members: 2,
+      contacts: 1000,
+      broadcast_messages_monthly: 1000,
+      ai_replies_monthly: overrides.limit ?? 300,
+      voice_minutes_monthly: 0,
+    },
+    usage: {
+      members: 1,
+      pending_invitations: 0,
+      contacts: 0,
+      broadcast_messages_monthly: 0,
+      ai_replies_monthly: overrides.used ?? 0,
+      voice_minutes_monthly: 0,
+    },
+  }
+}
+
+describe('dispatchInboundToAiReply — SaaS plan gates', () => {
+  it('does not reply for a read-only (lapsed) account, whatever the key', async () => {
+    h.getEntitlements.mockResolvedValue(entitlements({ writable: false }))
+    await dispatchInboundToAiReply(ARGS)
+    expect(h.generateReply).not.toHaveBeenCalled()
+    expect(h.engineSendText).not.toHaveBeenCalled()
+  })
+
+  it("stops platform-AI replies once the month's allowance is used", async () => {
+    h.loadAiConfig.mockResolvedValue({ ...aiConfig(), keySource: 'platform' })
+    h.getEntitlements.mockResolvedValue(entitlements({ used: 300, limit: 300 }))
+    await dispatchInboundToAiReply(ARGS)
+    expect(h.generateReply).not.toHaveBeenCalled()
+    expect(h.engineSendText).not.toHaveBeenCalled()
+  })
+
+  it('replies on platform AI while allowance remains', async () => {
+    h.loadAiConfig.mockResolvedValue({ ...aiConfig(), keySource: 'platform' })
+    h.getEntitlements.mockResolvedValue(entitlements({ used: 299, limit: 300 }))
+    await dispatchInboundToAiReply(ARGS)
+    expect(h.engineSendText).toHaveBeenCalled()
+  })
+
+  it("does not cap the business's own key by the plan's AI allowance", async () => {
+    h.loadAiConfig.mockResolvedValue({ ...aiConfig(), keySource: 'own' })
+    h.getEntitlements.mockResolvedValue(entitlements({ used: 999, limit: 300 }))
+    await dispatchInboundToAiReply(ARGS)
+    expect(h.engineSendText).toHaveBeenCalled()
   })
 })
 

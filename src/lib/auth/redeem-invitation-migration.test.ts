@@ -14,6 +14,11 @@ const tablesWithoutDomainData = new Set([
   "account_invitations",
   "member_presence",
   "pending_message_statuses",
+  // SaaS bookkeeping (062): the trial row is created automatically for
+  // every account and cascades with it; the audit log keeps its rows
+  // (account_id SET NULL). Neither is business data worth protecting.
+  "account_subscriptions",
+  "platform_audit_log",
 ]);
 
 function accountScopedTables(): Set<string> {

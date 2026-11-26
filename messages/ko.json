@@ -2206,7 +2206,9 @@
       "providerOpenAiCompatible": "OpenAI 호환 API",
       "baseUrl": "기본 URL",
       "baseUrlHint": "OpenAI 호환 API의 기본 URL입니다. 예: https://api.groq.com/openai/v1. /chat/completions 경로는 직접 입력하지 않는 경우 자동으로 추가됩니다.",
-      "missingBaseUrl": "OpenAI 호환 API의 기본 URL을 입력하세요."
+      "missingBaseUrl": "OpenAI 호환 API의 기본 URL을 입력하세요.",
+      "usePlatformAi": "Use GrowthXAi AI (included in your plan)",
+      "usePlatformAiDesc": "No API key needed. Replies count towards your plan's monthly AI replies. Turn this off to use your own OpenAI or Anthropic key instead."
     },
     "aiKnowledge": {
       "loadFailed": "지식베이스를 불러오지 못했습니다",
@@ -2883,7 +2885,8 @@
         "savedIndexFailed": "저장되었지만 의미 기반 색인에 실패했습니다({message}). 키워드 검색은 계속 작동합니다. 재색인을 사용해 다시 시도하세요.",
         "savedNotIndexed": "저장되었지만 색인에 실패했습니다({message}). 아직 문서를 검색할 수 없습니다. 재색인을 사용해 다시 시도하세요.",
         "savedKeywordOnly": "키워드 검색만으로 저장되었습니다 — 임베딩 키를 복호화할 수 없습니다(ENCRYPTION_KEY를 확인한 후 키를 다시 입력하세요)."
-      }
+      },
+      "platformAiUnavailable": "GrowthXAi's built-in AI isn't available right now. Add your own AI key instead, or contact support."
     },
     "automations": {
       "copyName": "{name} (복사본)",
@@ -2983,5 +2986,13 @@
       "metaApiStatus": "Meta API 오류: {status}",
       "syncFailed": "템플릿을 동기화하지 못했습니다"
     }
+  },
+  "Billing": {
+    "readOnly": "Your GrowthXAi plan has expired, so your account is read-only. Choose a plan in Settings → Billing to continue sending messages.",
+    "broadcastLimit": "This broadcast needs {requested} messages, but your plan has {remaining} of {limit} broadcast messages left this month. Upgrade your plan or send to fewer contacts.",
+    "aiLimit": "You've used all {limit} AI replies included in your plan this month. Upgrade your plan or add your own AI key in Agent setup.",
+    "memberLimit": "Your plan allows {limit} team members (including pending invitations). Upgrade your plan to invite more people.",
+    "memberLimitGeneric": "Your plan's team-member limit has been reached. Upgrade your plan to invite more people.",
+    "contactLimit": "Your plan's contact limit has been reached. Upgrade your plan to add more contacts. Customers who message you on WhatsApp are still added automatically."
   }
 }

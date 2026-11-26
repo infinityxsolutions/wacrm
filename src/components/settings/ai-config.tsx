@@ -78,6 +78,9 @@ export function AiConfig() {
   // Empty string = leave unassigned (shared queue).
   const [handoffAgentId, setHandoffAgentId] = useState('');
   const [members, setMembers] = useState<AccountMember[]>([]);
+  // SaaS: use GrowthXAi's own AI (included in the plan) instead of a key.
+  const [usePlatformKey, setUsePlatformKey] = useState(false);
+  const [platformAvailable, setPlatformAvailable] = useState(false);
 
   // Guard keyed on the account (not a bare boolean) so an in-place
   // account switch — ownership transfer, multi-account membership —
@@ -94,10 +97,14 @@ export function AiConfig() {
         toast.error(data.error ?? t('loadFailed'));
         return;
       }
+      const platformOk = Boolean(data.platform_ai_available);
+      setPlatformAvailable(platformOk);
+      // New businesses default to the built-in AI: no key to find or pay for.
+      setUsePlatformKey(data.configured ? Boolean(data.use_platform_key) : platformOk);
       if (data.configured) {
         setConfigured(true);
         setProvider(data.provider);
-        setModel(data.model);
+        setModel(data.model ?? AI_PROVIDER_DEFAULT_MODEL[data.provider as AiProvider] ?? '');
         setBaseUrl(data.base_url ?? '');
         setSystemPrompt(data.system_prompt ?? '');
         setIsActive(data.is_active);
@@ -147,6 +154,7 @@ export function AiConfig() {
     embeddingsKeyEdited ? embeddingsKey.trim() || null : undefined;
 
   const buildBody = () => ({
+    use_platform_key: usePlatformKey,
     provider,
     model: model.trim(),
     base_url: provider === 'openai_compatible' ? baseUrl.trim() : null,
@@ -183,15 +191,15 @@ export function AiConfig() {
   };
 
   const handleSave = async () => {
-    if (!model.trim()) {
+    if (!usePlatformKey && !model.trim()) {
       toast.error(t('missingModel'));
       return;
     }
-    if (provider === 'openai_compatible' && !baseUrl.trim()) {
+    if (!usePlatformKey && provider === 'openai_compatible' && !baseUrl.trim()) {
       toast.error(t('missingBaseUrl'));
       return;
     }
-    if (!configured && !keyEdited) {
+    if (!usePlatformKey && !configured && !keyEdited) {
       toast.error(t('missingApiKey'));
       return;
     }
@@ -282,6 +290,22 @@ export function AiConfig() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {platformAvailable && (
+              <div className="flex items-start justify-between gap-4 rounded-md border border-primary/30 bg-primary/5 p-3">
+                <div className="space-y-1">
+                  <Label htmlFor="ai-use-platform">{t('usePlatformAi')}</Label>
+                  <p className="text-xs text-muted-foreground">{t('usePlatformAiDesc')}</p>
+                </div>
+                <Switch
+                  id="ai-use-platform"
+                  checked={usePlatformKey}
+                  onCheckedChange={setUsePlatformKey}
+                  disabled={disabled}
+                />
+              </div>
+            )}
+            {!usePlatformKey && (
+            <>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>{t('provider')}</Label>
@@ -381,6 +405,8 @@ export function AiConfig() {
                 </Button>
               </div>
             </div>
+            </>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="ai-embeddings-key">

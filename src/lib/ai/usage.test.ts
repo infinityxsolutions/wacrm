@@ -29,6 +29,7 @@ describe('logAiUsage', () => {
       prompt_tokens: 30,
       completion_tokens: 6,
       total_tokens: 36,
+      key_source: 'own',
     })
   })
 
@@ -43,6 +44,22 @@ describe('logAiUsage', () => {
       usage: null,
     })
     expect(from).not.toHaveBeenCalled()
+  })
+
+  it('always records a platform-key call, even without provider usage, so the plan allowance counts it', async () => {
+    const { db, insert } = fakeDb()
+    await logAiUsage(db, {
+      accountId: 'acct-1',
+      conversationId: null,
+      mode: 'draft',
+      provider: 'anthropic',
+      model: 'claude-x',
+      usage: null,
+      keySource: 'platform',
+    })
+    expect(insert).toHaveBeenCalledWith(
+      expect.objectContaining({ account_id: 'acct-1', key_source: 'platform', total_tokens: 0 }),
+    )
   })
 
   it('never throws when the insert errors', async () => {

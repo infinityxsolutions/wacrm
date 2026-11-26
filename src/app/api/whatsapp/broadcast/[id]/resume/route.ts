@@ -18,6 +18,7 @@ import { NextResponse } from 'next/server';
 import { after } from 'next/server';
 
 import { requireRole, toErrorResponse } from '@/lib/auth/account';
+import { assertWritable, getEntitlements } from '@/lib/billing/entitlements';
 import {
   BroadcastError,
   deliverBroadcast,
@@ -55,6 +56,9 @@ export async function POST(
     // write, and viewers are read-only. Resuming is no different — it
     // puts real messages on real phones.
     const { supabase, accountId, userId } = await requireRole('agent');
+
+    // SaaS: a lapsed or suspended account is read-only — no sending.
+    assertWritable(await getEntitlements(supabase, accountId));
 
     const limit = checkRateLimit(
       `broadcast-resume:${userId}`,

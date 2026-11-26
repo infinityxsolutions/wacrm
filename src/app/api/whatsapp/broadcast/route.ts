@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireRole, toErrorResponse } from '@/lib/auth/account'
+import { assertBroadcastQuota, getEntitlements } from '@/lib/billing/entitlements'
 import { sendTemplateMessage } from '@/lib/whatsapp/meta-api'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import type { SendTimeParams } from '@/lib/whatsapp/template-send-builder'
@@ -115,6 +116,11 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
+
+    // SaaS: this batch must fit in the plan's monthly broadcast
+    // allowance (and the account must not be read-only). Checked before
+    // anything is sent to Meta — a sent message can't be recalled.
+    assertBroadcastQuota(await getEntitlements(supabase, accountId), recipients.length)
 
     if (!template_name) {
       return NextResponse.json(
