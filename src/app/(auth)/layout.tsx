@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Link from "next/link";
 
 // Shared metadata for auth pages (login / signup / forgot-password).
 // None of these should be indexed — they'd compete with the marketing
@@ -20,5 +21,26 @@ export const metadata: Metadata = {
 };
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
-  return children;
+  return (
+    <>
+      {children}
+      <p className="mx-auto max-w-md px-4 pb-6 text-center text-xs text-muted-foreground">
+        <Link href="/privacy" className="underline">
+          Privacy Policy
+        </Link>
+        {" · "}
+        <Link href="/terms" className="underline">
+          Terms
+        </Link>
+        {" · "}
+        <Link href="/refund-policy" className="underline">
+          Refunds
+        </Link>
+        {" · "}
+        <Link href="/contact" className="underline">
+          Contact
+        </Link>
+      </p>
+    </>
+  );
 }
