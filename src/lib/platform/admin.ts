@@ -188,6 +188,18 @@ export function parsePlanUpdate(body: unknown): { id: string; patch: Record<stri
     if (field === 'max_members' && value < 1) return { error: 'max_members must be at least 1' }
     patch[field] = value
   }
+  // Yearly price: a whole number of rupees, or empty/null to use 10 x monthly.
+  if (b.price_inr_yearly !== undefined) {
+    if (b.price_inr_yearly === null || b.price_inr_yearly === '') {
+      patch.price_inr_yearly = null
+    } else {
+      const value = Number(b.price_inr_yearly)
+      if (!Number.isInteger(value) || value < 0 || value > 10_000_000) {
+        return { error: 'price_inr_yearly must be a whole number of 0 or more' }
+      }
+      patch.price_inr_yearly = value
+    }
+  }
   if (Object.keys(patch).length === 0) return { error: 'Nothing to update' }
   return { id, patch }
 }

@@ -19,6 +19,8 @@ const tablesWithoutDomainData = new Set([
   // (account_id SET NULL). Neither is business data worth protecting.
   "account_subscriptions",
   "platform_audit_log",
+  // Razorpay payment history (064): billing records, not business data.
+  "billing_payments",
 ]);
 
 function accountScopedTables(): Set<string> {
