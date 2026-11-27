@@ -163,6 +163,7 @@ const PLAN_INT_FIELDS = [
   'max_broadcast_messages_monthly',
   'max_ai_replies_monthly',
   'max_voice_minutes_monthly',
+  'max_emails_monthly',
   'sort_order',
 ] as const
 

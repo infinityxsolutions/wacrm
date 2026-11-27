@@ -62,6 +62,7 @@ export type PlanLimitCode =
   | 'ai_limit'
   | 'member_limit'
   | 'contact_limit'
+  | 'email_limit'
 
 /** Thrown when a plan limit blocks an action. Maps to HTTP 402. */
 export class PlanLimitError extends Error {

@@ -14,6 +14,7 @@ export interface PublicPlan {
   max_broadcast_messages_monthly: number;
   max_ai_replies_monthly: number;
   max_voice_minutes_monthly: number;
+  max_emails_monthly: number;
 }
 
 export interface PublicSubscription {

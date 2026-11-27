@@ -28,7 +28,7 @@ export async function GET() {
       supabase
         .from('plans')
         .select(
-          'id, name, description, price_inr_monthly, price_inr_yearly, max_members, max_contacts, max_broadcast_messages_monthly, max_ai_replies_monthly, max_voice_minutes_monthly, sort_order',
+          'id, name, description, price_inr_monthly, price_inr_yearly, max_members, max_contacts, max_broadcast_messages_monthly, max_ai_replies_monthly, max_voice_minutes_monthly, max_emails_monthly, sort_order',
         )
         .eq('is_public', true)
         .order('sort_order'),

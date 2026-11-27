@@ -33,6 +33,7 @@ interface PlanRow {
   max_broadcast_messages_monthly: number;
   max_ai_replies_monthly: number;
   max_voice_minutes_monthly: number;
+  max_emails_monthly: number;
   sort_order: number;
   is_public: boolean;
 }
@@ -232,6 +233,7 @@ const PLAN_NUMBER_FIELDS: (keyof PlanRow)[] = [
   'max_broadcast_messages_monthly',
   'max_ai_replies_monthly',
   'max_voice_minutes_monthly',
+  'max_emails_monthly',
 ];
 
 function PlansTab({ plans, onSaved }: { plans: PlanRow[]; onSaved: () => void }) {
