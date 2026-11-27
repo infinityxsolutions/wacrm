@@ -43,7 +43,8 @@
     "menuSettings": "Configuración",
     "menuSignOut": "Cerrar sesión",
     "platformAdmin": "Admin console",
-    "autopilot": "Autopilot"
+    "autopilot": "Autopilot",
+    "email": "Email"
   },
   "Header": {
     "dashboard": "Panel",
@@ -3006,6 +3007,23 @@
         "providerFailed": "The payment provider could not start the checkout. Please try again.",
         "invalidRequest": "Please choose a plan and billing period."
       }
+    },
+    "email": {
+      "errors": {
+        "settings_missing": "Set your sender name, reply-to email and address first.",
+        "campaign_not_found": "Campaign not found.",
+        "already_sent": "This campaign was already sent.",
+        "no_recipients": "No contacts with an email address match this audience.",
+        "invalid_audience": "Choose who should receive this email.",
+        "notConfigured": "Email sending is not switched on yet. Please contact support.",
+        "invalidSettings": "Please enter a sender name, a valid reply-to email and your business address.",
+        "invalidCampaign": "Please add a name, a subject and a message.",
+        "saveFailed": "Could not save. Please try again.",
+        "loadFailed": "Could not load email details.",
+        "notDraft": "Only drafts can be edited.",
+        "testNoEmail": "Your account has no email address to send the test to.",
+        "testFailed": "The test email could not be sent. Please try again."
+      }
     }
   },
   "Billing": {
@@ -3014,7 +3032,8 @@
     "aiLimit": "You've used all {limit} AI replies included in your plan this month. Upgrade your plan or add your own AI key in Agent setup.",
     "memberLimit": "Your plan allows {limit} team members (including pending invitations). Upgrade your plan to invite more people.",
     "memberLimitGeneric": "Your plan's team-member limit has been reached. Upgrade your plan to invite more people.",
-    "contactLimit": "Your plan's contact limit has been reached. Upgrade your plan to add more contacts. Customers who message you on WhatsApp are still added automatically."
+    "contactLimit": "Your plan's contact limit has been reached. Upgrade your plan to add more contacts. Customers who message you on WhatsApp are still added automatically.",
+    "emailLimit": "Your plan allows {limit} emails a month, and this send would go over it ({remaining} left this month)."
   },
   "BillingUi": {
     "loading": "Loading…",
@@ -3076,7 +3095,8 @@
     "colAmount": "Amount",
     "colMethod": "Method",
     "colStatus": "Status",
-    "compedNoPay": "This account is complimentary, so no payment is needed."
+    "compedNoPay": "This account is complimentary, so no payment is needed.",
+    "planEmails": "{n} emails / month"
   },
   "PlatformAdmin": {
     "loading": "Loading…",
@@ -3137,7 +3157,8 @@
     "allowlistEmpty": "No approved emails yet.",
     "add": "Add",
     "remove": "Remove",
-    "field_price_inr_yearly": "Yearly price (₹, empty = 10 × monthly)"
+    "field_price_inr_yearly": "Yearly price (₹, empty = 10 × monthly)",
+    "field_max_emails_monthly": "Emails per month"
   },
   "Autopilot": {
     "title": "Business Autopilot",
@@ -3222,6 +3243,60 @@
       "templates": "WhatsApp templates",
       "templatesHint": "Meta reviews each template, usually within minutes to a day. Submit after your WhatsApp number is connected.",
       "submitTemplates": "Submit templates to Meta"
+    }
+  },
+  "EmailUi": {
+    "title": "Email",
+    "subtitle": "Send email campaigns to your customers, next to WhatsApp. Every email carries an unsubscribe link and your business address.",
+    "notEnabled": "Email sending is not switched on yet. Please contact support.",
+    "quota": "{used} of {limit} emails used this month",
+    "quotaUnlimited": "{used} emails sent this month (no limit)",
+    "failed": "Something went wrong. Please try again.",
+    "settingsSaved": "Sender details saved",
+    "draftSaved": "Draft saved",
+    "testSent": "Test email sent to {email}",
+    "sentResult": "Sent {sent} emails, {failed} failed",
+    "sendConfirm": "Send this email to the chosen audience now? This cannot be undone.",
+    "deleteConfirm": "Delete this campaign?",
+    "sender": {
+      "title": "Sender details",
+      "desc": "Shown on every email. The address is required so recipients know who is writing.",
+      "fromName": "Business name shown as sender",
+      "replyTo": "Reply-to email (replies come here)",
+      "address": "Business postal address",
+      "addressPlaceholder": "Road 12, Banjara Hills, Hyderabad 500034",
+      "addressHint": "Included in the footer of every email.",
+      "save": "Save sender details"
+    },
+    "compose": {
+      "title": "New campaign",
+      "editTitle": "Edit draft",
+      "desc": "Write plain text. We turn it into a clean email for you.",
+      "needSettings": "Save your sender details above to start sending.",
+      "name": "Campaign name (only you see this)",
+      "subject": "Subject",
+      "body": "Message",
+      "variables": "You can use {{name}}, {{first_name}} and {{business_name}}.",
+      "audience": "Who should get it?",
+      "everyone": "Everyone with an email",
+      "audienceHint": "Contacts who unsubscribed, have no email or a bad address are skipped automatically.",
+      "saveDraft": "Save draft",
+      "sendTest": "Send test to me",
+      "send": "Send now",
+      "new": "Start a new one"
+    },
+    "history": {
+      "title": "Campaigns",
+      "empty": "No campaigns yet.",
+      "counts": "{sent} sent, {failed} failed",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "status": {
+      "draft": "Draft",
+      "sending": "Sending",
+      "sent": "Sent",
+      "failed": "Failed"
     }
   }
 }

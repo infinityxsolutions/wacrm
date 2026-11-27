@@ -11,6 +11,7 @@ import {
   Bell,
   Bot,
   Crown,
+  Mail,
   Sparkles,
   GitBranch,
   LayoutDashboard,
@@ -101,6 +102,7 @@ const navItems: NavItem[] = [
   { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
   { href: "/agents", labelKey: "aiAgents", icon: Bot },
   { href: "/autopilot", labelKey: "autopilot", icon: Sparkles },
+  { href: "/email", labelKey: "email", icon: Mail },
 ];
 
 const bottomNavItems = [

@@ -183,6 +183,7 @@ export function BillingPanel() {
                     <p>{t('planContacts', { n: p.max_contacts.toLocaleString('en-IN') })}</p>
                     <p>{t('planBroadcasts', { n: p.max_broadcast_messages_monthly.toLocaleString('en-IN') })}</p>
                     <p>{t('planAi', { n: p.max_ai_replies_monthly.toLocaleString('en-IN') })}</p>
+                    <p>{t('planEmails', { n: p.max_emails_monthly.toLocaleString('en-IN') })}</p>
                     {p.id === e.plan.id && <Badge variant="outline">{t('currentPlan')}</Badge>}
                     {paymentsEnabled && !e.is_comped && !subscription?.has_paid_subscription && (
                       <Button className="mt-2 w-full" size="sm" disabled={busy !== null} onClick={() => void choose(p.id)}>
